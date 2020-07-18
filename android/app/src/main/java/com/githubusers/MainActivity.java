@@ -1,4 +1,4 @@
-package com.gobarber;
+package com.githubusers;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
