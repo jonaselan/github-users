@@ -40,7 +40,6 @@ export default class Main extends Component {
     if (users) {
       this.setState({ users: JSON.parse(users) })
     }
-
   }
 
   // NOTE: o underline representa as props anteriores
@@ -82,7 +81,7 @@ export default class Main extends Component {
   }
 
   render() {
-    const { users, newUser, loading} = this.state
+    const { users, newUser, loading } = this.state
 
     return (
       <Container>

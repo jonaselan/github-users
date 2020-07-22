@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { ActivityIndicator } from 'react-native';
 import PropTypes from 'prop-types';
 import api from '../../services/api'
 
@@ -28,20 +29,25 @@ export default class User extends Component {
   }
 
   state = {
-    starts: []
+    starts: [],
+    loading: false
   }
 
   async componentDidMount() {
     const { navigation } = this.props;
     const user = navigation.getParam('user');
+    this.setState({ loading: true });
 
     const response = await api.get(`/users/${user.login}/starred`);
 
-    this.setState({ stars: response.data });
+    this.setState({
+      stars: response.data,
+      loading: false
+    });
   }
 
   render() {
-    const { stars } = this.state;
+    const { stars, loading } = this.state;
     const { navigation } = this.props;
     const user = navigation.getParam('user');
 
@@ -53,21 +59,26 @@ export default class User extends Component {
           <Bio>{user.bio}</Bio>
         </Header>
 
-        <Stars
-          data={stars}
-          keyExtractor={star => String(star.id)}
-          renderItem={({ item }) => (
-            <Starred>
-              <OwnerAvatar source={{ uri: item.owner.avatar_url }} />
-              <Info>
-                <Title> {item.name} </Title>
-                <Author> {item.owner.login} </Author>
-              </Info>
-            </Starred>
-          )}
-        >
+        { loading
+          ? (<ActivityIndicator color="#000" />)
+          : (
+            <Stars
+              data={stars}
+              keyExtractor={star => String(star.id)}
+              renderItem={({ item }) => (
+                <Starred>
+                  <OwnerAvatar source={{ uri: item.owner.avatar_url }} />
+                  <Info>
+                    <Title> {item.name} </Title>
+                    <Author> {item.owner.login} </Author>
+                  </Info>
+                </Starred>
+              )}
+            >
 
-        </Stars>
+            </Stars>
+          )
+        }
       </Container>
     );
   }
