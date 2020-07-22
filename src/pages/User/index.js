@@ -29,8 +29,10 @@ export default class User extends Component {
   }
 
   state = {
+    user: '',
     starts: [],
-    loading: false
+    loading: false,
+    page: 1
   }
 
   async componentDidMount() {
@@ -42,7 +44,23 @@ export default class User extends Component {
 
     this.setState({
       stars: response.data,
-      loading: false
+      loading: false,
+      user: user
+    });
+  }
+
+  loadMore = async () => {
+    const { page, starts, user } = this.state
+    const newPage = page + 1
+
+    const response = await api.get(`/users/${user.login}/starred?page=${newPage}`);
+    // console.tron.log(starts)
+    // console.tron.log(...response.data)
+    // console.tron.log([ ...starts, ...response.data ])
+
+    this.setState({
+      stars: [ ...starts, ...response.data ],
+      page: newPage
     });
   }
 
@@ -63,6 +81,8 @@ export default class User extends Component {
           ? (<ActivityIndicator color="#000" />)
           : (
             <Stars
+              onEndReachedThreshold={0.2} // Carrega mais itens quando chegar em 20% do fim
+              onEndReached={this.loadMore} // Função que carrega mais itens
               data={stars}
               keyExtractor={star => String(star.id)}
               renderItem={({ item }) => (
